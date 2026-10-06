@@ -2,6 +2,10 @@
 
 Small, focused pull requests are welcome. Open an issue before a large change.
 
+Start with the [architecture](docs/ARCHITECTURE.md) and
+[repository guide](AGENTS.md). User-facing details live in focused documents
+linked from the README.
+
 1. Add a failing test that demonstrates the issue.
 2. Make the smallest clear change that fixes it.
 3. Run `go test -race ./...`, `go vet ./...`, and `gofmt`.
