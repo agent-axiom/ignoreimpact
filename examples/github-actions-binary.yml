@@ -1,0 +1,45 @@
+# Template: use only after a reviewed binary release exists. Pin its real SHA256.
+name: Ignore policy impact (binary)
+on: [pull_request]
+permissions:
+  contents: read
+jobs:
+  compare:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Install the reviewed binary (no Go required)
+        env:
+          VERSION: 0.1.0-rc.1
+          ASSET_SHA256: REPLACE_WITH_VERIFIED_RELEASE_ARCHIVE_SHA256
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$ASSET_SHA256" =~ ^[0-9a-f]{64}$ ]] || { echo 'Pin a verified release checksum first'; exit 2; }
+          name="ignoreimpact_${VERSION}_linux_amd64.tar.gz"
+          url="https://github.com/agent-axiom/ignoreimpact/releases/download/v${VERSION}/${name}"
+          curl --proto '=https' --tlsv1.2 --fail --location --retry 3 "$url" -o "$RUNNER_TEMP/$name"
+          printf '%s  %s\n' "$ASSET_SHA256" "$RUNNER_TEMP/$name" | sha256sum --check --strict
+          mkdir "$RUNNER_TEMP/ignoreimpact-bin"
+          tar -xzf "$RUNNER_TEMP/$name" -C "$RUNNER_TEMP/ignoreimpact-bin" ignoreimpact
+          echo "$RUNNER_TEMP/ignoreimpact-bin" >> "$GITHUB_PATH"
+      - name: Compare the base policy on the current tree
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="$RUNNER_TEMP/base.dockerignore"
+          candidate="$RUNNER_TEMP/candidate.dockerignore"
+          if git cat-file -e "$BASE_SHA:.dockerignore" 2>/dev/null; then
+            git show "$BASE_SHA:.dockerignore" > "$base"
+          else
+            : > "$base"
+          fi
+          if test -f .dockerignore; then cp .dockerignore "$candidate"; else : > "$candidate"; fi
+          ignoreimpact compare --before "$base" --after "$candidate" --fail-on added
+# This reads the checked-out tree without running scripts from the PR.
+# Adjust the context/policies if the project uses Dockerfile-specific policies.

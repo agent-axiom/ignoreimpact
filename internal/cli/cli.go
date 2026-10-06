@@ -17,7 +17,10 @@ import (
 	"github.com/agent-axiom/ignoreimpact/internal/scan"
 )
 
-const Version = "0.1.0"
+// Version and SourceCommit are injected by the release build.
+var Version = "dev"
+var SourceCommit = ""
+
 const help = `IgnoreImpact: see what a Docker ignore-policy change includes or excludes.
 
 Usage:
@@ -92,7 +95,7 @@ func Run(ctx context.Context, args []string, out, errout io.Writer) int {
 		if len(args) != 1 {
 			return fail(errout, errors.New("version takes no arguments"))
 		}
-		if _, err := fmt.Fprintln(out, "ignoreimpact "+Version); err != nil {
+		if _, err := fmt.Fprintln(out, versionString()); err != nil {
 			return 2
 		}
 		return 0
@@ -260,4 +263,12 @@ func explain(args []string, out, errout io.Writer) int {
 		return fail(errout, err)
 	}
 	return 0
+}
+
+func versionString() string {
+	text := "ignoreimpact " + Version
+	if SourceCommit != "" {
+		text += " (" + SourceCommit + ")"
+	}
+	return text
 }

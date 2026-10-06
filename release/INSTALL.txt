@@ -1,0 +1,32 @@
+IgnoreImpact binary distribution
+==============================
+
+No Go installation or Docker daemon is needed to run this binary.
+
+1. Verify the archive's SHA-256 against SHA256SUMS from the same release.
+2. Extract the archive to a new folder.
+3. Run ./ignoreimpact version (Windows: .\ignoreimpact.exe version).
+4. Try the bundled 20-second demo from the extracted folder:
+
+   ./ignoreimpact compare --context examples/demo/context --before examples/demo/before.dockerignore --after examples/demo/after.dockerignore
+
+   Added: 1 entry, 18 B. Removed: 1 entry, 11 B. Net: +7 B.
+
+   Add --json for machine-readable output.
+   Add --fail-on added to receive exit 1 for this intentional inclusion change.
+
+Copy the binary into a directory on your PATH if desired. No service, system
+configuration, or auto-update process is installed. BUILDINFO.json records its
+version, source commit, target, and binary checksum.
+
+These binaries have no publisher signature, notarization, or cryptographic
+provenance attestation. SHA256SUMS detects accidental corruption; trust also
+depends on the source of the files and the reviewed build workflow. Do not bypass
+OS security warnings automatically. Build from the reviewed source if you prefer.
+
+Documentation: https://github.com/agent-axiom/ignoreimpact/tree/main/docs
+Source/license: https://github.com/agent-axiom/ignoreimpact
+
+Byte counts are local regular-file sizes, not image or transfer size. IgnoreImpact
+is not a secret scanner. Use a stable filesystem during scans. See docs/LIMITS.md
+in the source repository for the complete contract.

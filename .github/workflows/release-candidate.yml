@@ -1,0 +1,149 @@
+name: Release candidate
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Candidate version (empty uses release/config.json)'
+        type: string
+        required: false
+  push:
+    branches: [main]
+    paths:
+      - 'release/**'
+      - 'scripts/**'
+      - 'cmd/**'
+      - 'internal/**'
+      - 'go.mod'
+      - 'go.sum'
+      - '.github/workflows/release-candidate.yml'
+permissions:
+  contents: read
+concurrency:
+  group: release-candidate-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.meta.outputs.version }}
+      artifact_name: ${{ steps.meta.outputs.artifact_name }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
+        with:
+          go-version: '1.27.1'
+      - name: Validate source and packaging
+        run: |
+          go mod download
+          go mod verify
+          go test -race ./...
+          go vet ./...
+          python3 -m unittest discover -s scripts -v
+      - name: Build candidate archives
+        env:
+          CANDIDATE_VERSION: ${{ inputs.version }}
+        run: python3 scripts/build_release.py --version "$CANDIDATE_VERSION"
+      - name: Verify reproducibility and checksums
+        env:
+          CANDIDATE_VERSION: ${{ inputs.version }}
+        run: |
+          python3 scripts/build_release.py --output .tools/reproduce --version "$CANDIDATE_VERSION"
+          diff -r dist .tools/reproduce
+          python3 scripts/verify_release.py dist --commit "$GITHUB_SHA"
+      - name: Artifact metadata
+        id: meta
+        run: |
+          echo "version=$(python3 -c 'import json; print(json.load(open("dist/release-manifest.json"))["version"])')" >> "$GITHUB_OUTPUT"
+          echo "artifact_name=candidate-${GITHUB_SHA}-${GITHUB_RUN_ATTEMPT}" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: ${{ steps.meta.outputs.artifact_name }}
+          path: dist/*
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30
+  native-install:
+    needs: build
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            os: linux
+            arch: amd64
+            extension: tar.gz
+          - runner: ubuntu-24.04-arm
+            os: linux
+            arch: arm64
+            extension: tar.gz
+          - runner: macos-15-intel
+            os: darwin
+            arch: amd64
+            extension: tar.gz
+          - runner: macos-15
+            os: darwin
+            arch: arm64
+            extension: tar.gz
+          - runner: windows-2025
+            os: windows
+            arch: amd64
+            extension: zip
+          - runner: windows-11-arm
+            os: windows
+            arch: arm64
+            extension: zip
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5
+        with:
+          name: ${{ needs.build.outputs.artifact_name }}
+          path: dist
+      - name: Verify source identity and hashes
+        run: python scripts/verify_release.py dist --commit "${{ github.sha }}"
+      - name: Test extracted binary without Go on PATH
+        run: python scripts/smoke_release.py "dist/ignoreimpact_${{ needs.build.outputs.version }}_${{ matrix.os }}_${{ matrix.arch }}.${{ matrix.extension }}" --report "smoke-${{ matrix.os }}-${{ matrix.arch }}.json"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: smoke-${{ matrix.os }}-${{ matrix.arch }}-${{ needs.build.outputs.artifact_name }}
+          path: smoke-*.json
+          if-no-files-found: error
+          overwrite: true
+          retention-days: 30
+  verified-candidate:
+    needs: [build, native-install]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5
+        with:
+          name: ${{ needs.build.outputs.artifact_name }}
+          path: dist
+      - uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5
+        with:
+          pattern: smoke-*-${{ needs.build.outputs.artifact_name }}
+          path: smoke-results
+      - name: Assemble verified candidate
+        run: |
+          python3 scripts/verify_release.py dist --commit "$GITHUB_SHA" --smoke-dir smoke-results
+          echo '## Verified binary candidate' >> "$GITHUB_STEP_SUMMARY"
+          echo "Source: $GITHUB_SHA" >> "$GITHUB_STEP_SUMMARY"
+          echo 'All six native installation checks passed with Go removed from PATH.' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Unsigned build metadata only; nothing has been published as a GitHub Release.' >> "$GITHUB_STEP_SUMMARY"
+          echo '```text' >> "$GITHUB_STEP_SUMMARY"
+          cat dist/SHA256SUMS >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: verified-${{ needs.build.outputs.artifact_name }}
+          path: dist/*
+          if-no-files-found: error
+          overwrite: true
+          compression-level: 0
+          retention-days: 30

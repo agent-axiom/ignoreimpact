@@ -2,3 +2,6 @@
 /bin/
 /coverage.out
 *.test
+
+/dist/
+/scripts/__pycache__/

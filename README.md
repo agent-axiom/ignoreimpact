@@ -15,6 +15,8 @@ One Go binary. Official Moby matching. No Docker daemon or file uploads.
 
 ## Install
 
+[Binary candidates, no Go required](docs/INSTALL.md) · [Release verification](docs/RELEASING.md)
+
 ```sh
 go install github.com/agent-axiom/ignoreimpact/cmd/ignoreimpact@latest
 ```

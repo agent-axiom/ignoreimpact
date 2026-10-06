@@ -4,6 +4,8 @@
 
 ## Install or build
 
+For standalone binaries, see [binary installation](INSTALL.md).
+
 Go 1.24 or newer is required. CI tests Linux, macOS, and Windows.
 
 ```sh
@@ -109,7 +111,8 @@ An output-stream failure may leave partial output and returns `2`.
 
 The [GitHub Actions example](../examples/github-actions.yml) compares a PR's
 root policy with its base version. Set its reviewed IgnoreImpact commit before
-using it. The example does not execute code from the PR.
+using it. The example does not execute code from the PR. A [binary-only recipe](../examples/github-actions-binary.yml)
+is also available; it requires a published release and a pinned archive checksum.
 
 ## Output
 

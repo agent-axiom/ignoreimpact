@@ -112,3 +112,13 @@ func TestTruncationDisclosed(t *testing.T) {
 		t.Fatal(out)
 	}
 }
+
+func TestReleaseVersionMetadata(t *testing.T) {
+	oldVersion, oldCommit := Version, SourceCommit
+	defer func() { Version, SourceCommit = oldVersion, oldCommit }()
+	Version, SourceCommit = "0.1.0-rc.1", "0123456789012345678901234567890123456789"
+	code, out, err := run("version")
+	if code != 0 || out != "ignoreimpact 0.1.0-rc.1 (0123456789012345678901234567890123456789)\n" || err != "" {
+		t.Fatalf("%d %q %q", code, out, err)
+	}
+}

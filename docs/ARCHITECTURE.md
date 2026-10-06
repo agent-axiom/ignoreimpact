@@ -63,3 +63,9 @@ The [CI workflow](../.github/workflows/ci.yml) runs tests, vet, and builds on Li
 macOS, and Windows. Linux also checks formatting, a differential fuzz smoke test,
 and exact reproduction of the committed JSON demo. Local checks are not evidence
 that a later remote commit's CI passed; inspect that commit's run.
+
+## Release engineering
+
+[Release process](RELEASING.md) covers reproducible cross-builds, native install
+checks, checksums, and unsigned build metadata. These scripts are separate from
+the runtime CLI and do not add network behavior to scans.

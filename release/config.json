@@ -1,0 +1,12 @@
+{
+  "version": "0.1.0-rc.1",
+  "go_version": "go1.27.1",
+  "targets": [
+    "linux/amd64",
+    "linux/arm64",
+    "darwin/amd64",
+    "darwin/arm64",
+    "windows/amd64",
+    "windows/arm64"
+  ]
+}
