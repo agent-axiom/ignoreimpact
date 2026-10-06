@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/agent-axiom/ignoreimpact/blob/main/docs/report.schema.json",
+  "title": "IgnoreImpact comparison report v1",
+  "type": "object",
+  "required": ["schema_version", "before_policy", "after_policy", "scanned_entries", "before", "after", "added", "removed", "delta_bytes", "changes"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "before_policy": {"$ref": "#/$defs/source"},
+    "after_policy": {"$ref": "#/$defs/source"},
+    "scanned_entries": {"type": "integer", "minimum": 0},
+    "before": {"$ref": "#/$defs/totals"},
+    "after": {"$ref": "#/$defs/totals"},
+    "added": {"$ref": "#/$defs/totals"},
+    "removed": {"$ref": "#/$defs/totals"},
+    "delta_bytes": {"type": "integer"},
+    "changes": {"type": "array", "items": {"$ref": "#/$defs/change"}}
+  },
+  "$defs": {
+    "source": {"type": "object", "required": ["kind"], "properties": {"kind": {"enum": ["explicit", "dockerfile-specific", "context-default", "empty"]}, "path": {"type": "string"}}},
+    "totals": {"type": "object", "required": ["entries", "regular_files", "symlinks", "bytes"], "properties": {"entries": {"type": "integer", "minimum": 0}, "regular_files": {"type": "integer", "minimum": 0}, "symlinks": {"type": "integer", "minimum": 0}, "bytes": {"type": "integer", "minimum": 0}}},
+    "rule": {"type": "object", "required": ["line", "text", "pattern", "action"], "properties": {"line": {"type": "integer", "minimum": 1}, "text": {"type": "string"}, "pattern": {"type": "string"}, "action": {"enum": ["include", "exclude"]}}},
+    "decision": {"type": "object", "required": ["included", "rule"], "properties": {"included": {"type": "boolean"}, "rule": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/rule"}]}}},
+    "change": {"type": "object", "required": ["path", "kind", "bytes", "change", "before", "after"], "properties": {"path": {"type": "string"}, "kind": {"enum": ["file", "symlink"]}, "bytes": {"type": "integer", "minimum": 0}, "change": {"enum": ["added", "removed"]}, "before": {"$ref": "#/$defs/decision"}, "after": {"$ref": "#/$defs/decision"}}}
+  }
+}

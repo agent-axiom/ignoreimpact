@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "before_policy": {
+    "kind": "explicit",
+    "path": "examples/demo/before.dockerignore"
+  },
+  "after_policy": {
+    "kind": "explicit",
+    "path": "examples/demo/after.dockerignore"
+  },
+  "scanned_entries": 5,
+  "before": {
+    "entries": 2,
+    "regular_files": 2,
+    "symlinks": 0,
+    "bytes": 33
+  },
+  "after": {
+    "entries": 2,
+    "regular_files": 2,
+    "symlinks": 0,
+    "bytes": 40
+  },
+  "added": {
+    "entries": 1,
+    "regular_files": 1,
+    "symlinks": 0,
+    "bytes": 18
+  },
+  "removed": {
+    "entries": 1,
+    "regular_files": 1,
+    "symlinks": 0,
+    "bytes": 11
+  },
+  "delta_bytes": 7,
+  "changes": [
+    {
+      "path": ".env.example",
+      "kind": "file",
+      "bytes": 11,
+      "change": "removed",
+      "before": {
+        "included": true,
+        "rule": null
+      },
+      "after": {
+        "included": false,
+        "rule": {
+          "line": 1,
+          "text": ".env*",
+          "pattern": ".env*",
+          "action": "exclude"
+        }
+      }
+    },
+    {
+      "path": "node_modules/cache.bin",
+      "kind": "file",
+      "bytes": 18,
+      "change": "added",
+      "before": {
+        "included": false,
+        "rule": {
+          "line": 1,
+          "text": "node_modules",
+          "pattern": "node_modules",
+          "action": "exclude"
+        }
+      },
+      "after": {
+        "included": true,
+        "rule": null
+      }
+    }
+  ]
+}
