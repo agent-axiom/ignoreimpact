@@ -1,40 +1,90 @@
-# Copy into your project's .github/workflows/ignoreimpact.yml and set a reviewed
-# IgnoreImpact commit. The fixture compares explicit root .dockerignore files.
+# Copy into .github/workflows/ignoreimpact.yml. Read docs/CI.md before enabling.
+# Root build context and root Dockerfile only; all changed paths are untrusted data.
 name: Ignore policy impact
 on: [pull_request]
 permissions:
   contents: read
 jobs:
   compare:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
+          ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
           persist-credentials: false
       - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
         with:
-          go-version: '1.27.x'
+          go-version: '1.27.1'
           cache: false
       - name: Install a reviewed IgnoreImpact revision
         env:
-          # Replace with an immutable, reviewed commit before enabling this job.
-          IGNOREIMPACT_REV: REPLACE_WITH_REVIEWED_COMMIT
-        run: go install github.com/agent-axiom/ignoreimpact/cmd/ignoreimpact@"$IGNOREIMPACT_REV"
-      - name: Compare base policy with the current tree
-        env:
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          # Review this immutable revision before adopting or updating it.
+          IGNOREIMPACT_REV: 2183d2a5407559e94fc08d2d7f070ac9ae811127
+          GOWORK: 'off'
+          GOTOOLCHAIN: local
         shell: bash
         run: |
           set -euo pipefail
-          base="$RUNNER_TEMP/base.dockerignore"
-          if git cat-file -e "$BASE_SHA:.dockerignore" 2>/dev/null; then
-            git show "$BASE_SHA:.dockerignore" > "$base"
-          else
-            : > "$base"
-          fi
-          candidate="$RUNNER_TEMP/candidate.dockerignore"
-          if test -f .dockerignore; then cp .dockerignore "$candidate"; else : > "$candidate"; fi
-          ignoreimpact compare --before "$base" --after "$candidate" --fail-on added
-# This only reads the checked-out tree. It does not run scripts from the PR.
-# Set --context to your build context, and adapt policy paths for custom Dockerfiles.
+          cd "$RUNNER_TEMP"
+          go install github.com/agent-axiom/ignoreimpact/cmd/ignoreimpact@"$IGNOREIMPACT_REV"
+      - name: Extract regular policy blobs
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -I - <<'PYTHON'
+          import os, pathlib, re, subprocess, tempfile
+
+          def git(*args):
+              return subprocess.check_output(["git", *args])
+
+          revisions = [os.environ["BASE_SHA"], os.environ["HEAD_SHA"]]
+          for revision in revisions:
+              if not re.fullmatch(r"[0-9a-f]{40}", revision):
+                  raise SystemExit("Expected a full base/head commit SHA")
+              git("cat-file", "-e", revision + "^{commit}")
+          if git("rev-parse", "HEAD").decode().strip() != revisions[1]:
+              raise SystemExit("Checkout must be the exact PR head")
+
+          def policy(revision):
+              # This recipe handles root Dockerfile + root .dockerignore only.
+              if git("ls-tree", "-z", revision, "--", "Dockerfile.dockerignore"):
+                  raise SystemExit("Dockerfile-specific policy found: adapt policy selection first")
+              entry = git("ls-tree", "-z", revision, "--", ".dockerignore")
+              if not entry:
+                  return b""  # Verified missing policy intentionally means no exclusions.
+              metadata, path = entry.rstrip(b"\0").split(b"\t", 1)
+              mode, kind, oid = metadata.split()
+              if path != b".dockerignore" or kind != b"blob" or mode not in (b"100644", b"100755"):
+                  raise SystemExit("Policy must be a regular Git blob, never a symlink or directory")
+              if int(git("cat-file", "-s", oid.decode())) > 1048576:
+                  raise SystemExit("Policy exceeds the 1 MiB input limit")
+              return git("cat-file", "blob", oid.decode())
+
+          # Policies and reports stay outside the context. No checkout scripts run.
+          directory = pathlib.Path(tempfile.mkdtemp(prefix="ignoreimpact-", dir=os.environ["RUNNER_TEMP"]))
+          for revision, name in zip(revisions, ("before.dockerignore", "after.dockerignore")):
+              (directory / name).write_bytes(policy(revision))
+          with open(os.environ["GITHUB_ENV"], "a") as output:
+              output.write("POLICY_DIR=" + str(directory) + "\n")
+          PYTHON
+      - name: Compare both policies on the PR head tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Disable runner workflow commands before printing PR-controlled text.
+          token="$(python3 -I -c 'import secrets; print(secrets.token_hex(32))')"
+          printf '::stop-commands::%s\n' "$token"
+          trap 'printf "::%s::\n" "$token"' EXIT
+          status=0
+          ignoreimpact compare --context . \
+            --before "$POLICY_DIR/before.dockerignore" \
+            --after "$POLICY_DIR/after.dockerignore" \
+            --json --fail-on added > "$POLICY_DIR/report.json" || status=$?
+          # Gate failure (1) still has a complete report. Operational errors do not.
+          if (( status > 1 )); then exit "$status"; fi
+          cat "$POLICY_DIR/report.json"
+          exit "$status"

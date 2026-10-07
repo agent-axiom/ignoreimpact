@@ -1,0 +1,41 @@
+{
+  "tool_commit": "2183d2a5407559e94fc08d2d7f070ac9ae811127",
+  "cases": [
+    {
+      "id": "uptime-kuma",
+      "repository": "https://github.com/louislam/uptime-kuma.git",
+      "before_commit": "803029a9e4a9c8a68e716a59f966cc70f39ded6d",
+      "after_commit": "2b8c049e7b1b67ba99f52eee578180ca2f6d5bcf",
+      "tree": "d964bf0688f9e70e2050e0aa795dd1b614d8ebdd",
+      "policy_path": ".dockerignore",
+      "before_blob": "9c16887bdba9c0c0f97508d7f52f504b7f6933cc",
+      "after_blob": "fedba889587c8970a632b0fd40cc5c01422e566b",
+      "license_path": "LICENSE",
+      "license": "MIT"
+    },
+    {
+      "id": "excalidraw",
+      "repository": "https://github.com/excalidraw/excalidraw.git",
+      "before_commit": "bdc56090d780d601be2f5dac2cea082a374f06f6",
+      "after_commit": "e1c5c706c684223c63b009b8136862cdd97fc989",
+      "tree": "3ca25e1ecfc2f5d7bb9ab580c785dcae1ec68056",
+      "policy_path": ".dockerignore",
+      "before_blob": "9f12280ed4c85f771170e9f452494f06d9718e46",
+      "after_blob": "7a01509475f24846c36b6fb528e2a19033d00d98",
+      "license_path": "LICENSE",
+      "license": "MIT"
+    },
+    {
+      "id": "docker-getting-started",
+      "repository": "https://github.com/docker/getting-started.git",
+      "before_commit": "fec54de67bd359ae4d8544242ca7e9e71d105d4a",
+      "after_commit": "615af9ff0d0ee7b085b36ee09ef9b63d2322a6bf",
+      "tree": "331782295f7c22747680ea957e4e33894f001cbb",
+      "policy_path": ".dockerignore",
+      "before_blob": "b512c09d476623ff4bf8d0d63c29b784925dbdf8",
+      "after_blob": "f6583ff37f4fe49d18819affc38e873e5e031d7f",
+      "license_path": "LICENSE",
+      "license": "Apache-2.0"
+    }
+  ]
+}

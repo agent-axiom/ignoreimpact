@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "before_policy": {
+    "kind": "explicit",
+    "path": "before.dockerignore"
+  },
+  "after_policy": {
+    "kind": "explicit",
+    "path": "after.dockerignore"
+  },
+  "scanned_entries": 111,
+  "before": {
+    "entries": 84,
+    "regular_files": 84,
+    "symlinks": 0,
+    "bytes": 6388136
+  },
+  "after": {
+    "entries": 84,
+    "regular_files": 84,
+    "symlinks": 0,
+    "bytes": 6388136
+  },
+  "added": {
+    "entries": 0,
+    "regular_files": 0,
+    "symlinks": 0,
+    "bytes": 0
+  },
+  "removed": {
+    "entries": 0,
+    "regular_files": 0,
+    "symlinks": 0,
+    "bytes": 0
+  },
+  "delta_bytes": 0,
+  "changes": []
+}

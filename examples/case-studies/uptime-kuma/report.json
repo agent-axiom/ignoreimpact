@@ -1,0 +1,305 @@
+{
+  "schema_version": 1,
+  "before_policy": {
+    "kind": "explicit",
+    "path": "before.dockerignore"
+  },
+  "after_policy": {
+    "kind": "explicit",
+    "path": "after.dockerignore"
+  },
+  "scanned_entries": 186,
+  "before": {
+    "entries": 141,
+    "regular_files": 141,
+    "symlinks": 0,
+    "bytes": 679135
+  },
+  "after": {
+    "entries": 127,
+    "regular_files": 127,
+    "symlinks": 0,
+    "bytes": 673547
+  },
+  "added": {
+    "entries": 0,
+    "regular_files": 0,
+    "symlinks": 0,
+    "bytes": 0
+  },
+  "removed": {
+    "entries": 14,
+    "regular_files": 14,
+    "symlinks": 0,
+    "bytes": 5588
+  },
+  "delta_bytes": -5588,
+  "changes": [
+    {
+      "path": "kubernetes/README.md",
+      "kind": "file",
+      "bytes": 1523,
+      "change": "removed",
+      "before": {
+        "included": true,
+        "rule": null
+      },
+      "after": {
+        "included": false,
+        "rule": {
+          "line": 6,
+          "text": "/kubernetes",
+          "pattern": "kubernetes",
+          "action": "exclude"
+        }
+      }
+    },
+    {
+      "path": "kubernetes/kustomization.yml",
+      "kind": "file",
+      "bytes": 109,
+      "change": "removed",
+      "before": {
+        "included": true,
+        "rule": null
+      },
+      "after": {
+        "included": false,
+        "rule": {
+          "line": 6,
+          "text": "/kubernetes",
+          "pattern": "kubernetes",
+          "action": "exclude"
+        }
+      }
+    },
+    {
+      "path": "kubernetes/uptime-kuma/deployment.yml",
+      "kind": "file",
+      "bytes": 957,
+      "change": "removed",
+      "before": {
+        "included": true,
+        "rule": null
+      },
+      "after": {
+        "included": false,
+        "rule": {
+          "line": 6,
+          "text": "/kubernetes",
+          "pattern": "kubernetes",
+          "action": "exclude"
+        }
+      }
+    },
+    {
+      "path": "kubernetes/uptime-kuma/ingressroute.yml",
+      "kind": "file",
+      "bytes": 1189,
+      "change": "removed",
+      "before": {
+        "included": true,
+        "rule": null
+      },
+      "after": {
+        "included": false,
+        "rule": {
+          "line": 6,
+          "text": "/kubernetes",
+          "pattern": "kubernetes",
+          "action": "exclude"
+        }
+      }
+    },
+    {
+      "path": "kubernetes/uptime-kuma/kustomization.yml",
+      "kind": "file",
+      "bytes": 78,
+      "change": "removed",
+      "before": {
+        "included": true,
+        "rule": null
+      },
+      "after": {
+        "included": false,
+        "rule": {
+          "line": 6,
+          "text": "/kubernetes",
+          "pattern": "kubernetes",
+          "action": "exclude"
+        }
+      }
+    },
+    {
+      "path": "kubernetes/uptime-kuma/pvc.yml",
+      "kind": "file",
+      "bytes": 152,
+      "change": "removed",
+      "before": {
+        "included": true,
+        "rule": null
+      },
+      "after": {
+        "included": false,
+        "rule": {
+          "line": 6,
+          "text": "/kubernetes",
+          "pattern": "kubernetes",
+          "action": "exclude"
+        }
+      }
+    },
+    {
+      "path": "kubernetes/uptime-kuma/service.yml",
+      "kind": "file",
+      "bytes": 204,
+      "change": "removed",
+      "before": {
+        "included": true,
+        "rule": null
+      },
+      "after": {
+        "included": false,
+        "rule": {
+          "line": 6,
+          "text": "/kubernetes",
+          "pattern": "kubernetes",
+          "action": "exclude"
+        }
+      }
+    },
+    {
+      "path": "test/test_install_script/alpine3.dockerfile",
+      "kind": "file",
+      "bytes": 129,
+      "change": "removed",
+      "before": {
+        "included": true,
+        "rule": null
+      },
+      "after": {
+        "included": false,
+        "rule": {
+          "line": 5,
+          "text": "/test",
+          "pattern": "test",
+          "action": "exclude"
+        }
+      }
+    },
+    {
+      "path": "test/test_install_script/centos7.dockerfile",
+      "kind": "file",
+      "bytes": 91,
+      "change": "removed",
+      "before": {
+        "included": true,
+        "rule": null
+      },
+      "after": {
+        "included": false,
+        "rule": {
+          "line": 5,
+          "text": "/test",
+          "pattern": "test",
+          "action": "exclude"
+        }
+      }
+    },
+    {
+      "path": "test/test_install_script/centos8.dockerfile",
+      "kind": "file",
+      "bytes": 91,
+      "change": "removed",
+      "before": {
+        "included": true,
+        "rule": null
+      },
+      "after": {
+        "included": false,
+        "rule": {
+          "line": 5,
+          "text": "/test",
+          "pattern": "test",
+          "action": "exclude"
+        }
+      }
+    },
+    {
+      "path": "test/test_install_script/debian.dockerfile",
+      "kind": "file",
+      "bytes": 260,
+      "change": "removed",
+      "before": {
+        "included": true,
+        "rule": null
+      },
+      "after": {
+        "included": false,
+        "rule": {
+          "line": 5,
+          "text": "/test",
+          "pattern": "test",
+          "action": "exclude"
+        }
+      }
+    },
+    {
+      "path": "test/test_install_script/ubuntu.dockerfile",
+      "kind": "file",
+      "bytes": 260,
+      "change": "removed",
+      "before": {
+        "included": true,
+        "rule": null
+      },
+      "after": {
+        "included": false,
+        "rule": {
+          "line": 5,
+          "text": "/test",
+          "pattern": "test",
+          "action": "exclude"
+        }
+      }
+    },
+    {
+      "path": "test/test_install_script/ubuntu1604.dockerfile",
+      "kind": "file",
+      "bytes": 262,
+      "change": "removed",
+      "before": {
+        "included": true,
+        "rule": null
+      },
+      "after": {
+        "included": false,
+        "rule": {
+          "line": 5,
+          "text": "/test",
+          "pattern": "test",
+          "action": "exclude"
+        }
+      }
+    },
+    {
+      "path": "test/ubuntu-nodejs16.dockerfile",
+      "kind": "file",
+      "bytes": 283,
+      "change": "removed",
+      "before": {
+        "included": true,
+        "rule": null
+      },
+      "after": {
+        "included": false,
+        "rule": {
+          "line": 5,
+          "text": "/test",
+          "pattern": "test",
+          "action": "exclude"
+        }
+      }
+    }
+  ]
+}

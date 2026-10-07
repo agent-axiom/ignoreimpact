@@ -1,0 +1,16 @@
+{
+  "tool_commit": "2183d2a5407559e94fc08d2d7f070ac9ae811127",
+  "repository": "https://github.com/excalidraw/excalidraw.git",
+  "source_commit": "e1c5c706c684223c63b009b8136862cdd97fc989",
+  "source_tree": "3ca25e1ecfc2f5d7bb9ab580c785dcae1ec68056",
+  "inventory_sha256": "69369776373dce2d5398256586292c4c8b67ce1e3a98c03d948f151407537fcc",
+  "tracked_blobs": 522,
+  "tracked_blob_bytes": 6698153,
+  "tracked_symlinks": 0,
+  "omitted_submodules": [],
+  "license_sha256": "1352d204fdb90d5e482c13139d848bc2c9300a9a7de358a0a558a23e72d0d8be",
+  "before_policy_sha256": "f2429030435b0cd89dd2106ce07cc031fffd91a3c0225281e06a9cd6179005ff",
+  "after_policy_sha256": "76f2b9b659f64b514e9d1cee371936e12ab2755561a823a4867dc3f89ba711c3",
+  "report_sha256": "127af39455f5c14bb22877bac5ce6c47e66ecf33e351db64cce443292f8960e9",
+  "snapshot": "Raw tracked Git blobs; no .git, filters, LFS downloads, dependency installation, additional generated files, or submodule contents."
+}

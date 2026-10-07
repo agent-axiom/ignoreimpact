@@ -43,6 +43,7 @@ Each changed path also shows its before/after rule. [Full JSON output →](examp
 ## Read next
 
 - [Usage](docs/USAGE.md): commands, policy selection, JSON, and CI gates
+- [CI adoption](docs/CI.md) · [Reproducible public case studies](docs/CASE_STUDIES.md)
 - [Semantics](docs/SEMANTICS.md): matching rules and byte accounting
 - [Limits](docs/LIMITS.md): filesystem safety, resource bounds, and scope
 - [Architecture](docs/ARCHITECTURE.md): code map, contracts, and tests

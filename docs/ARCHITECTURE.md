@@ -69,3 +69,16 @@ that a later remote commit's CI passed; inspect that commit's run.
 [Release process](RELEASING.md) covers reproducible cross-builds, native install
 checks, checksums, and unsigned build metadata. These scripts are separate from
 the runtime CLI and do not add network behavior to scans.
+
+## Adoption examples
+
+The copyable CI policy-extraction and reporting steps have offline synthetic
+regression tests:
+
+```sh
+python3 -m unittest discover -s scripts -p 'test_ci_examples.py' -v
+```
+
+[Public case studies](CASE_STUDIES.md) have a separate opt-in reproduction script.
+It acquires pinned public source snapshots; it is not part of the product runtime
+or a network dependency of unit tests.

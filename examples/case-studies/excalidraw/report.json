@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "before_policy": {
+    "kind": "explicit",
+    "path": "before.dockerignore"
+  },
+  "after_policy": {
+    "kind": "explicit",
+    "path": "after.dockerignore"
+  },
+  "scanned_entries": 576,
+  "before": {
+    "entries": 443,
+    "regular_files": 443,
+    "symlinks": 0,
+    "bytes": 6194801
+  },
+  "after": {
+    "entries": 445,
+    "regular_files": 445,
+    "symlinks": 0,
+    "bytes": 6196969
+  },
+  "added": {
+    "entries": 2,
+    "regular_files": 2,
+    "symlinks": 0,
+    "bytes": 2168
+  },
+  "removed": {
+    "entries": 0,
+    "regular_files": 0,
+    "symlinks": 0,
+    "bytes": 0
+  },
+  "delta_bytes": 2168,
+  "changes": [
+    {
+      "path": ".env.development",
+      "kind": "file",
+      "bytes": 1154,
+      "change": "added",
+      "before": {
+        "included": false,
+        "rule": {
+          "line": 1,
+          "text": "*",
+          "pattern": "*",
+          "action": "exclude"
+        }
+      },
+      "after": {
+        "included": true,
+        "rule": {
+          "line": 2,
+          "text": "!.env.development",
+          "pattern": "!.env.development",
+          "action": "include"
+        }
+      }
+    },
+    {
+      "path": ".env.production",
+      "kind": "file",
+      "bytes": 1014,
+      "change": "added",
+      "before": {
+        "included": false,
+        "rule": {
+          "line": 1,
+          "text": "*",
+          "pattern": "*",
+          "action": "exclude"
+        }
+      },
+      "after": {
+        "included": true,
+        "rule": {
+          "line": 3,
+          "text": "!.env.production",
+          "pattern": "!.env.production",
+          "action": "include"
+        }
+      }
+    }
+  ]
+}

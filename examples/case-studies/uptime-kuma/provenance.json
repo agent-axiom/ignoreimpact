@@ -1,0 +1,16 @@
+{
+  "tool_commit": "2183d2a5407559e94fc08d2d7f070ac9ae811127",
+  "repository": "https://github.com/louislam/uptime-kuma.git",
+  "source_commit": "2b8c049e7b1b67ba99f52eee578180ca2f6d5bcf",
+  "source_tree": "d964bf0688f9e70e2050e0aa795dd1b614d8ebdd",
+  "inventory_sha256": "74dd82c4c86029f5f3d5c604a5029e443c147c19aedbe9a5c8498aff85d5f7cf",
+  "tracked_blobs": 164,
+  "tracked_blob_bytes": 1344950,
+  "tracked_symlinks": 0,
+  "omitted_submodules": [],
+  "license_sha256": "a0e4fe6bed45a817794411c8ddf2deffbe010ac3a2b2f47e5b8d2fe2f9486883",
+  "before_policy_sha256": "2afcc0782f7b240175a8add6f924ef863f65aad47fc154efe6fa4cb254b4b18b",
+  "after_policy_sha256": "fbd23dde1587c6b171beed21b25b7d7b5df46f404c7b8f3cf53051d17d69f698",
+  "report_sha256": "b096cc274b59c91f3107b3baa19ad87f5b993fe105055af00196f1b790666724",
+  "snapshot": "Raw tracked Git blobs; no .git, filters, LFS downloads, dependency installation, additional generated files, or submodule contents."
+}

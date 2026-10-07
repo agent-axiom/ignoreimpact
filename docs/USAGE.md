@@ -109,10 +109,10 @@ even when removals make the net change negative. Combine it with any gate.
 The complete report still prints on exit `1`. Scan failures return no report.
 An output-stream failure may leave partial output and returns `2`.
 
-The [GitHub Actions example](../examples/github-actions.yml) compares a PR's
-root policy with its base version. Set its reviewed IgnoreImpact commit before
-using it. The example does not execute code from the PR. A [binary-only recipe](../examples/github-actions-binary.yml)
-is also available; it requires a published release and a pinned archive checksum.
+See [CI adoption](CI.md) for ready-to-adapt workflows, safe policy extraction,
+gate selection, and clean-checkout limitations. The source workflow pins an
+immutable tool revision; the binary-only template requires a published release
+and a reviewed archive checksum.
 
 ## Output
 

@@ -1,0 +1,16 @@
+{
+  "tool_commit": "2183d2a5407559e94fc08d2d7f070ac9ae811127",
+  "repository": "https://github.com/docker/getting-started.git",
+  "source_commit": "615af9ff0d0ee7b085b36ee09ef9b63d2322a6bf",
+  "source_tree": "331782295f7c22747680ea957e4e33894f001cbb",
+  "inventory_sha256": "156d4423a55a4f323bab28b9749de15df2408f7175b9f86fa5774e993f7bdeea",
+  "tracked_blobs": 84,
+  "tracked_blob_bytes": 6388136,
+  "tracked_symlinks": 0,
+  "omitted_submodules": [],
+  "license_sha256": "c5accbbd8546e94c34aed24afe689a617627d18eed5a6c48277e48db57c23851",
+  "before_policy_sha256": "dba27c31aad935787bb275c3e5e4e957708f15386de599eff1db476022cd7e4c",
+  "after_policy_sha256": "9527ba5f3f070743b426bc74d5a22bfa6b2633266694d047c80cbc6e99336861",
+  "report_sha256": "3f31de24728d59d5ba853a229156e5242f1c9ab2f713756c2eed2347b6bf4437",
+  "snapshot": "Raw tracked Git blobs; no .git, filters, LFS downloads, dependency installation, additional generated files, or submodule contents."
+}
