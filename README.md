@@ -40,6 +40,8 @@ Removed:  1 entries | 11 B
 The demo includes `node_modules/cache.bin` and excludes `.env.example`: **+7 B**.
 Each changed path also shows its before/after rule. [Full JSON output →](examples/demo/report.json)
 
+[Reproduce the 28-second terminal demo](docs/DEMO.md).
+
 ## Read next
 
 - [Usage](docs/USAGE.md): commands, policy selection, JSON, and CI gates
