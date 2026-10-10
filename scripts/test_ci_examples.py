@@ -1,4 +1,5 @@
 """Synthetic, offline regression checks for the copyable CI workflow scripts."""
+import json
 import os
 from pathlib import Path
 import shutil
@@ -155,6 +156,81 @@ class CIExamplesTests(unittest.TestCase):
                 self.assertEqual(lines[-1], "::" + token + "::")
                 self.assertEqual("##[warning]untrusted" in result.stdout, status < 2)
 
+    def real_compare(self, directory, status):
+        """Exercise the exact recipe with a real built CLI, not the shell stub."""
+        binary = Path(os.environ.get("IGNOREIMPACT_BINARY", ROOT / "ignoreimpact")).resolve()
+        self.assertTrue(binary.is_file(), "Build ./ignoreimpact first or set IGNOREIMPACT_BINARY")
+        executables = self.root / "real-bin"
+        executables.mkdir(exist_ok=True)
+        tool = executables / "ignoreimpact"
+        if not tool.exists():
+            tool.symlink_to(binary)
+        env = dict(os.environ, POLICY_DIR=str(directory),
+                   PATH=str(executables) + os.pathsep + os.environ["PATH"])
+        reports = []
+        for example in EXAMPLES:
+            for repeat in range(2):
+                result = subprocess.run(
+                    ["bash", "-c", run_block(example, "Compare both policies on the PR head tree")],
+                    cwd=self.repo, env=env, capture_output=True, text=True)
+                self.assertEqual(result.returncode, status, result.stderr)
+                lines = result.stdout.splitlines()
+                self.assertRegex(lines[0], r"^::stop-commands::[0-9a-f]{64}$")
+                token = lines[0].split("::")[-1]
+                self.assertEqual(lines[-1], "::" + token + "::")
+                report = (directory / "report.json").read_bytes()
+                if status == 2:
+                    self.assertEqual(len(lines), 2, "Operational errors must not print a report")
+                    self.assertEqual(report, b"")
+                else:
+                    self.assertEqual("\n".join(lines[1:-1]) + "\n", report.decode())
+                reports.append(report)
+        self.assertTrue(all(report == reports[0] for report in reports))
+        return json.loads(reports[0]) if status < 2 else None
+
+    def test_real_cli_byte_and_rule_impact(self):
+        payload = b"synthetic bytes\x00\n"
+        (self.repo / "payload.bin").write_bytes(payload)
+        cases = (
+            (b"payload.bin\n", b"", 1, "added", "before", 1, "payload.bin", "exclude"),
+            (b"", b"payload.bin\n", 0, "removed", "after", 1, "payload.bin", "exclude"),
+            (b"*.bin\n", b"*.bin\n!payload.bin\n", 1, "added", "after", 2, "!payload.bin", "include"),
+            (b"absent.bin\n", b"other-absent.bin\n", 0, None, None, None, None, None),
+        )
+        for before, after, status, change, side, line, text, action in cases:
+            with self.subTest(before=before, after=after):
+                self.envfile.unlink(missing_ok=True)
+                base = self.commit(before)
+                head = self.commit(after)
+                directory = self.extract(base, head)
+                report = self.real_compare(directory, status)
+                self.assertEqual(report["schema_version"], 1)
+                self.assertEqual(report["delta_bytes"], report["after"]["bytes"] - report["before"]["bytes"])
+                self.assertEqual(report["delta_bytes"], report["added"]["bytes"] - report["removed"]["bytes"])
+                for kind in ("added", "removed"):
+                    expected = int(kind == change)
+                    self.assertEqual(report[kind], {"entries": expected, "regular_files": expected,
+                                                   "symlinks": 0, "bytes": expected * len(payload)})
+                if change is None:
+                    self.assertEqual(report["changes"], [])
+                    continue
+                self.assertEqual(len(report["changes"]), 1)
+                item = report["changes"][0]
+                self.assertEqual((item["path"], item["kind"], item["bytes"], item["change"]),
+                                 ("payload.bin", "file", len(payload), change))
+                self.assertEqual(item[side]["rule"], {"line": line, "text": text,
+                                                    "pattern": text, "action": action})
+                self.assertEqual(item["before"]["included"], change == "removed")
+                self.assertEqual(item["after"]["included"], change == "added")
+
+    def test_real_cli_operational_error_is_not_gate_failure(self):
+        base = self.commit(b"old\n")
+        head = self.commit(b"new\n")
+        directory = self.extract(base, head)
+        (directory / "after.dockerignore").unlink()
+        self.real_compare(directory, 2)
+
 
 if __name__ == "__main__":
     unittest.main()
+

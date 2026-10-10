@@ -137,7 +137,30 @@ license, and a canonical inventory of tracked paths, modes, Git blob IDs, and
 blob sizes. Root license texts are preserved alongside the small policy excerpts;
 the upstream repositories are not vendored.
 
-## Scope and exclusions
+## Offline CI recipe regressions
+
+The historical measurements above are separate from the synthetic regression
+fixtures in `scripts/test_ci_examples.py`. Those fixtures run both copyable CI
+recipes against a real IgnoreImpact binary and one current Git worktree. They
+verify an inclusion increase, an exclusion decrease, a negation-rule inclusion,
+and a zero-effect edit, with exact file counts, logical bytes, winning rule
+lines, and gate exit codes. A missing extracted policy separately verifies
+operational exit code 2 and suppression of incomplete report output. Each
+comparison runs twice per recipe and must produce identical report bytes.
+
+Run the checks locally from the repository root:
+
+```sh
+go build -trimpath -o ignoreimpact ./cmd/ignoreimpact
+python3 -m unittest discover -s scripts -p 'test_ci_examples.py' -v
+```
+
+Alternatively set `IGNOREIMPACT_BINARY` to an absolute path to a reviewed,
+locally available binary. CI uses the binary built from its own checkout.
+The synthetic payload is exactly 17 bytes; it establishes regression behavior,
+not a production saving, benchmark, or additional public-repository case study.
+
+## Measurement scope and exclusions
 
 All comparisons use raw tracked Git blobs from one immutable after-commit tree.
 They exclude `.git` metadata, untracked files, dependency installation, newly
@@ -152,3 +175,4 @@ Policies and output reports are outside the measured context. No Docker builds,
 network transfers inside the scanner, production workloads, timing benchmarks,
 or final-image measurements were performed. Public root licenses were checked
 at the pinned commits; the examples imply no upstream endorsement or adoption.
+
